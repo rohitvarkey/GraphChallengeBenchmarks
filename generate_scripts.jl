@@ -59,13 +59,11 @@ function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
                 open(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"), "w") do f
                     write(f, script)
                 end
-                #=
                 if qsub
                     run(`qsub $(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"))`)
                 else
                     write(masterscripthandle, """bash $(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"))\n""")
                 end
-                =#
             end
         end
     end
