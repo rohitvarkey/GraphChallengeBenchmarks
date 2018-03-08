@@ -20,7 +20,7 @@ function qsub_header(nthread, job, type_name, num_nodes, useremail="", queue="")
     #PBS -q $queue
     #PBS -j oe
     module load gcc/5.3.0
-    module load julia/6.2.0
+    module load julia/0.6.2
     export JULIA_NUM_THREADS=$(nthread)
     """
     header
@@ -51,7 +51,7 @@ function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
     for T in types
         for nthread in nthreads
             for n in num_nodes
-                output_file = joinpath(outputdir, types_output_dir[T], "$(types_output_dir[T])_$n")
+                output_file = joinpath(outputdir, types_output_dir[T], "$(types_output_dir[T])_$(n)_$nthread")
                 script = """#!/bin/bash
                 $(if qsub qsub_header(nthread, "gc", T, n, useremail, queue) else "" end)
                 julia -O3 --check-bounds=no -e 'include("$benchfile"); bench($T, $(n), "$(output_file)")'
