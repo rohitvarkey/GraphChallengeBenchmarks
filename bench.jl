@@ -1,14 +1,16 @@
 using GraphChallenge
-using JLD
+using DataFrames
+using CSV
 
 function precompile_run(T)
     static_partition_experiment(T, 50)
 end
 
-function bench(T, num_nodes, output_file)
+function bench(T, num_nodes, output_file, seed = 0)
     precompile_run(T)
-    results = static_partition_experiment(T, num_nodes)
-    open(output_file, "w") do file
-        write(file, "$results")
-    end
+    srand(seed)
+    p, m, t = static_partition_experiment(T, num_nodes)
+    df = convert(DataFrame, [m])
+    CSV.write(output_file, df)
+    p, m, t
 end
