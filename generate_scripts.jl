@@ -32,6 +32,7 @@ function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
     create_directories(["input", "output", "scripts"])
     types_output_dir = Dict(
         Array{Int64, 2} => "matrix",
+        SparseMatrixCSC{Int64, Int64} => "sparse_matrix",
         InterblockEdgeCountStinger => "stinger",
         InterblockEdgeCountDictDict => "dictdict",
         InterblockEdgeCountVectorDict => "vectordict",
