@@ -11,7 +11,7 @@ function create_directories(directories)
 end
 
 function qsub_header(nthread, job, type_name, num_nodes, useremail="", queue="")
-    header = """#PBS -N $(job)_$(type_name)_$(num_nodes)
+    header = """#PBS -N $(job)_$(num_nodes)_$(type_name)
     #PBS -l nodes=1:ppn=$(nthread)
     #PBS -l walltime=12:00:00
     #PBS -l mem=160gb
@@ -53,7 +53,7 @@ function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
             for n in num_nodes
                 output_file = joinpath(outputdir, types_output_dir[T], "$(types_output_dir[T])_$(n)_$nthread")
                 script = """#!/bin/bash
-                $(if qsub qsub_header(nthread, "gc", T, n, useremail, queue) else "" end)
+                $(if qsub qsub_header(nthread, "gc", types_output_dir[T], n, useremail, queue) else "" end)
                 julia -O3 --check-bounds=no -e 'include("$benchfile"); bench($T, $(n), "$(output_file)")'
                 """
                 open(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"), "w") do f
