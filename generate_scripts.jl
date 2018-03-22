@@ -1,5 +1,14 @@
 using GraphChallenge
 
+const TYPES_OUTPUT_DIR = Dict(
+    Array{Int64, 2} => "matrix",
+    SparseMatrixCSC{Int64, Int64} => "sparse_matrix",
+    InterblockEdgeCountStinger => "stinger",
+    InterblockEdgeCountDictDict => "dictdict",
+    InterblockEdgeCountVectorDict => "vectordict",
+    InterblockEdgeCountSQLite => "sqlite"
+)
+
 function create_directories(directories)
     curdir = dirname(@__FILE__)
     for dirname in directories
@@ -29,17 +38,9 @@ end
 function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
     #Create the directories
     create_directories(["input", "output", "scripts"])
-    types_output_dir = Dict(
-        Array{Int64, 2} => "matrix",
-        SparseMatrixCSC{Int64, Int64} => "sparse_matrix",
-        InterblockEdgeCountStinger => "stinger",
-        InterblockEdgeCountDictDict => "dictdict",
-        InterblockEdgeCountVectorDict => "vectordict",
-        InterblockEdgeCountSQLite => "sqlite"
-    )
     for dir in ("output", "scripts")
         create_directories(
-            ["$dir/$(types_output_dir[T])" for T in types]
+            ["$dir/$(TYPES_OUTPUT_DIR[T])" for T in types]
         )
     end
 
@@ -51,18 +52,18 @@ function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
     for T in types
         for nthread in nthreads
             for n in num_nodes
-                output_file = joinpath(outputdir, types_output_dir[T], "$(types_output_dir[T])_$(n)_$nthread")
+                output_file = joinpath(outputdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$(n)_$nthread")
                 script = """#!/bin/bash
-                $(if qsub qsub_header(nthread, "gc", types_output_dir[T], n, useremail, queue) else "" end)
+                $(if qsub qsub_header(nthread, "gc", TYPES_OUTPUT_DIR[T], n, useremail, queue) else "" end)
                 julia -O3 --check-bounds=no -e 'include("$benchfile"); bench($T, $(n), "$(output_file)")'
                 """
-                open(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"), "w") do f
+                open(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n"), "w") do f
                     write(f, script)
                 end
                 if qsub
-                    run(`qsub $(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"))`)
+                    run(`qsub $(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n"))`)
                 else
-                    write(masterscripthandle, """bash $(joinpath(scriptdir, types_output_dir[T], "$(types_output_dir[T])_$n"))\n""")
+                    write(masterscripthandle, """bash $(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n"))\n""")
                 end
             end
         end
