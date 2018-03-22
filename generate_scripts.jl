@@ -13,13 +13,12 @@ end
 function qsub_header(nthread, job, type_name, num_nodes, useremail="", queue="")
     header = """#PBS -N $(job)_$(num_nodes)_$(type_name)
     #PBS -l nodes=1:ppn=$(nthread)
-    #PBS -l walltime=12:00:00
+    #PBS -l walltime=24:00:00
     #PBS -l mem=160gb
     #PBS -m abe
     #PBS -M $useremail
     #PBS -q $queue
     #PBS -j oe
-    module load gcc/5.3.0
     module load julia/0.6.2
     export JULIA_NUM_THREADS=$(nthread)
     """
