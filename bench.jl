@@ -1,6 +1,7 @@
 using GraphChallenge
 using DataFrames
 using CSV
+using Threads
 
 function precompile_run(T)
     static_partition_experiment(T, 50)
@@ -11,6 +12,7 @@ function bench(T, num_nodes, output_file, seed = 0)
     srand(seed)
     p, m, t = static_partition_experiment(T, num_nodes)
     df = convert(DataFrame, [m])
+    df[:threads] = [Threads.nthreads()]
     CSV.write(output_file, df)
     p, m, t
 end
