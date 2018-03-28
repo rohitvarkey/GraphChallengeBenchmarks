@@ -6,7 +6,8 @@ const TYPES_OUTPUT_DIR = Dict(
     InterblockEdgeCountStinger => "stinger",
     InterblockEdgeCountDictDict => "dictdict",
     InterblockEdgeCountVectorDict => "vectordict",
-    InterblockEdgeCountSQLite => "sqlite"
+    InterblockEdgeCountSQLite => "sqlite",
+    SparseUpdateIBEM => "sparse_update",
 )
 
 function create_directories(directories)

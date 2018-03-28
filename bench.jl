@@ -1,7 +1,7 @@
 using GraphChallenge
 using DataFrames
 using CSV
-using Threads
+import Base.Threads
 
 function precompile_run(T)
     static_partition_experiment(T, 50)
