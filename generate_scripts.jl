@@ -58,11 +58,11 @@ function runbench(nthreads, num_nodes, types; qsub=true, useremail="", queue="")
                 $(if qsub qsub_header(nthread, "gc", TYPES_OUTPUT_DIR[T], n, useremail, queue) else "" end)
                 julia -O3 --check-bounds=no -e 'include("$benchfile"); bench($T, $(n), "$(output_file)")'
                 """
-                open(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n"), "w") do f
+                open(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n_$(nthread)"), "w") do f
                     write(f, script)
                 end
                 if qsub
-                    run(`qsub $(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n"))`)
+                    run(`qsub $(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n_$(nthread)"))`)
                 else
                     write(masterscripthandle, """bash $(joinpath(scriptdir, TYPES_OUTPUT_DIR[T], "$(TYPES_OUTPUT_DIR[T])_$n"))\n""")
                 end
